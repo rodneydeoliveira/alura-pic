@@ -77,7 +77,7 @@ describe('Login e registro de usuários da AluraPic', () => {
             cy.get('input[formcontrolname="password"]').type(usuario.password);
             cy.contains('button', 'Register').click();
          })
-})
+    })
 
 
 })
