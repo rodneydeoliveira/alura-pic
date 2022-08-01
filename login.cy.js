@@ -2,10 +2,14 @@ describe('Login de usuários da AluraPic', () => {
 
     beforeEach(() => {
         cy.visit('https://alura-fotos.herokuapp.com/')
+        cy.intercept('POST', 'https://apialurapic.herokuapp.com/user/login', {
+            statuscode: 400
+        }).as('stubPost')
 
     })
     it('fazer login de usuário válido', () => {
-        cy.login('flavio', '123');
+        cy.login(Cypress.env('userName'), Cypress.env('password'));
+        cy.wait('@stubPost')
         cy.contains('a', '(Logout)').should('be.visible');
         })
     it('fazer login de usuário inválido', () => {
@@ -15,14 +19,14 @@ describe('Login de usuários da AluraPic', () => {
     })
 }) 
     it('registrar usuário válido', () => {
-    cy.novoUsuario('rodney@lucas', 'Rodney', 'Rodney', '12345678');
+    cy.novoUsuario('rodney@lucas', 'Rodney', 'rodney', '12345678');
     })
     it('Tentativa de registro de usuário cadastrado', () => {
-        cy.login_usuario_cadastrado('rodney@lucas', 'rodney', 'Rodney', '12345678');
+        cy.login_usuario_cadastrado('rodney@lucas', 'rodney', 'rodney', '12345678');
     })
     const usuarios = require('../../fixtures/usuarios.json');
     usuarios.forEach(usuario => {
-        it.only(`Registra novo usuário ${usuario.userName}`,() => {
+        it(`Registra novo usuário ${usuario.userName}`,() => {
             cy.contains('a', 'Register now').click();
             cy.contains('button', 'Register').click();
             cy.get('input[formcontrolname="email"]').type(usuario.email);
